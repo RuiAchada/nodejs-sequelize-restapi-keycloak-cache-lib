@@ -30,7 +30,11 @@ class CachingUtils {
   static stringifyQueryOptions(queryOpt) {
     let queryOptString = "";
     Object.entries(queryOpt).forEach(([key, value]) => {
-      // console.log(`${key}: ${value}`);
+      // Ignore if value is a function
+      if (typeof value === "function") {
+        return;
+      }
+
       // if encounter "where" options, we need to desymbolize the symbol inside it
       if (key === "where" || key === "include") {
         queryOptString +=
@@ -250,14 +254,13 @@ class CachingUtils {
       // model.name
     ];
 
+    const plainInstances = instances.map(CachingUtils.instanceToData);
     // return cacheClient.set(key, instances.map(CachingUtils.instanceToData))
     //   .then(() => instances)
+    // return await cacheClient.hset(hashKey, compositeKey.key, instances.map(CachingUtils.instanceToData))
+    //     .then(() => instances);
     return await cacheClient
-      .hset(
-        hashKey,
-        compositeKey.key,
-        instances.map(CachingUtils.instanceToData)
-      )
+      .hset(hashKey, compositeKey.key, JSON.stringify(plainInstances))
       .then(() => instances);
   }
 
@@ -319,7 +322,7 @@ class CachingUtils {
       // undefined - cache miss
       return dataArray;
     }
-    // console.log(dataArray);
+
     return dataArray.map((data) => CachingUtils.dataToInstance(model, data));
   }
 
