@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 // import Logger from './Logger';
 
 class JwtHelper {
@@ -37,7 +37,7 @@ class JwtHelper {
         throw error;
       }
     }
-}
+  }
 }
 
-export default JwtHelper;
+module.exports = JwtHelper;
