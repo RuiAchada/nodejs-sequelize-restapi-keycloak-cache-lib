@@ -1,6 +1,7 @@
 // this class is to support caching for Class / sequelizeModel Methods:
 // create, findByPk, findById, update, findAll, findOne, destroy, bulkCreate,count, max, min, sum, increment, decrement
 const CachingUtils = require("./CachingUtils.js");
+const crypto = require("crypto");
 
 class SequelizeClassMethodsCaching {
   constructor() {}
@@ -175,7 +176,14 @@ class SequelizeClassMethodsCaching {
         compositeKey["hashKey"] = loggedInUserId
           ? loggedInUserId + ":" + sequelizeModel.name + ":find"
           : sequelizeModel.name + ":find";
-        compositeKey.key = "findAll" + queryOptiontString;
+
+        const keyName = "findAll" + queryOptiontString;
+        const hashedKeyName = crypto
+          .createHash("md5")
+          .update(keyName)
+          .digest("hex");
+
+        compositeKey.key = hashedKeyName;
 
         // let instances = await CachingUtils.getAll(cacheClient, sequelizeModel, customKey);
         let instances = await CachingUtils.getHashAll(
@@ -214,7 +222,14 @@ class SequelizeClassMethodsCaching {
         compositeKey["hashKey"] = loggedInUserId
           ? loggedInUserId + ":" + sequelizeModel.name + ":find"
           : sequelizeModel.name + ":find";
-        compositeKey.key = "findAndCountAll" + queryOptiontString;
+
+        const keyName = "findAndCountAll" + queryOptiontString;
+        const hashedKeyName = crypto
+          .createHash("md5")
+          .update(keyName)
+          .digest("hex");
+
+        compositeKey.key = hashedKeyName;
 
         // let instances = await CachingUtils.getAll(cacheClient, sequelizeModel, customKey);
         let countAndInstances = await CachingUtils.getHashAndCountAll(
@@ -267,7 +282,15 @@ class SequelizeClassMethodsCaching {
         compositeKey["hashKey"] = loggedInUserId
           ? loggedInUserId + ":" + sequelizeModel.name + ":find"
           : sequelizeModel.name + ":find";
-        compositeKey.key = "findOne" + queryOptiontString;
+
+        const keyName = "findOne" + queryOptiontString;
+        const hashedKeyName = crypto
+          .createHash("md5")
+          .update(keyName)
+          .digest("hex");
+
+        compositeKey.key = hashedKeyName;
+
         let instance = await CachingUtils.getHash(
           cacheClient,
           sequelizeModel,
